@@ -1,0 +1,51 @@
+name: Functionname
+inputs:
+- {name: input1, type: String}
+- {name: input2, type: Dataset}
+outputs:
+- {name: output1, type: Dataset}
+implementation:
+  container:
+    image: python:3.9.5
+    command:
+    - sh
+    - -c
+    - |2
+
+      if ! [ -x "$(command -v pip)" ]; then
+          python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip
+      fi
+
+      PIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet     --no-warn-script-location 'pandas==1.2.4' 'numpy==1.20.3' 'kfp==1.8.9' && "$0" "$@"
+    - sh
+    - -ec
+    - |
+      program_path=$(mktemp -d)
+      printf "%s" "$0" > "$program_path/ephemeral_component.py"
+      python3 -m kfp.v2.components.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+    - |2+
+
+      import kfp
+      from kfp.v2 import dsl
+      from kfp.v2.dsl import *
+      from typing import *
+
+      def functionname(
+              input1:str,
+              input2:Input[Dataset],
+              output1:Output[Dataset],
+      ):
+          import logging
+          import numpy as np
+          import pandas as pd
+
+          #write the logic here.....
+          #....
+          #.....
+          df.to_csv(output1.path,index=False)
+
+    args:
+    - --executor_input
+    - {executorInput: null}
+    - --function_to_execute
+    - functionname
