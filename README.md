@@ -248,7 +248,75 @@ The pipeline present is from the create run method in our main.py file, which is
 
 
 
-##### 
+##### Cloud Monitoring
+
+It is monitoring logs.
+
+Lets say cloud function subscribed to pub/sub topic.
+
+So based on the pub/sub topic message, we can create logs from our cloud function, like security logs or general info logs.
+
+Then cloud monitor will monitor the logs and if its security log, it will alert to the mail id.
+
+##### cloud function
+
+##### Based on the message posted on that pub/sub topic, this function works.
+
+##### It creates logs...
+
+import base64
+
+import json
+
+def hello_pubsub(event, context):
+
+​	“”Triggered from a message on a Cloud Pub/Sub topic.
+
+​	Args:
+
+​		event (dict): Event payload.
+
+​		context (google.cloud.function.Context): Metadata for the event.
+
+​	pubsub_message = base64.b64decode(event[‘data’]).decode(‘utf-8’)
+
+​	print(pubsub_message)
+
+​	if pubsub_message==‘some_error_line’:
+
+​		entry = dict(
+
+​				severity=‘ALERT’,
+
+​				message=‘Some failure occurred’
+
+​	)
+
+​	else:
+
+​		entry = dict(
+
+​				severity=‘INFO’,
+
+​				message=‘This is the default display msg’
+
+​	)
+
+​	print(json.dumps(entry))
 
 
+
+##### Cloud Monitor
+
+##### For creating alert based on the logs cloud function logged.
+
+resource.type=‘cloud_function’
+
+severity=ALERT
+
+log_name=‘projects/xxx’
+
+resource.labels.project_id=‘playground-xxx’
+
+resource.labels.function_name=‘test-function’
 
